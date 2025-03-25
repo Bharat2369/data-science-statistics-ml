@@ -1,0 +1,162 @@
+---
+title: "Simulating the Central Limit Theorem with Exponential Distribution"
+author: "Bharat Dogra"
+date: "2025-03-24"
+output: pdf_document
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+## Overview
+This project investigates the Central Limit Theorem (CLT) using simulations with the exponential distribution. We simulate averages of 40 exponential variables over 1000 trials and compare the resulting sampling distribution with theoretical expectations. We analyze its mean, variance, and shape to confirm convergence to normality. We also conduct basic inferential analysis using the ToothGrowth dataset.
+## Simulations
+We simulate 1000 averages of 40 exponential random variables with a rate parameter `lambda = 0.2`. The theoretical mean and standard deviation of the exponential distribution are both `1 / lambda = 5`.
+
+```{r simulate-setup}
+set.seed(1234)
+lambda <- 0.2
+n <- 40
+num_sim <- 1000
+
+# Simulate sample means
+means <- replicate(num_sim, mean(rexp(n, lambda)))
+```
+## Visualizing the Sampling Distribution
+We create a histogram of the sample means and compare the sample mean to the theoretical mean.
+
+```{r sample-mean-check}
+# Histogram of sample means
+hist(means, main = "Sampling Distribution of the Mean (n = 40)", 
+     xlab = "Sample Mean", col = "lightblue", breaks = 40)
+
+# Compare sample mean and theoretical mean
+sample_mean <- mean(means)
+theoretical_mean <- 1 / lambda
+```
+
+## Sample Variance vs Theoretical Variance
+We now compare the sample variance of the means to the theoretical variance of the sampling distribution of the mean. The theoretical variance is calculated as `(1 / lambda)^2 / n`.
+
+```{r variance-check-1}
+# Calculate sample and theoretical variance
+sample_variance <- var(means)
+theoretical_variance <- (1 / lambda)^2 / n # Variance of the sample mean
+
+# Output both values
+sample_variance
+theoretical_variance
+```
+
+## Demonstrating Approximate Normality
+To show the distribution of sample means is approximately normal, we overlay a normal curve on the histogram and create a Q-Q plot.
+
+```{r normality-check-1, fig.height=4, fig.width=7}
+```
+# Histogram with normal curve
+hist(means, probability = TRUE, 
+     main = "Histogram with Normal Curve", 
+     col = "lightblue", xlab = "Sample Mean")
+curve(dnorm(x, mean = mean(means), sd = sd(means)), 
+      col = "red", lwd = 2, add = TRUE)
+
+# Q-Q plot
+qqnorm(means)
+qqline(means, col = "red", lwd = 2)
+```
+## ToothGrowth Data Analysis
+We now perform basic inferential analysis using the `ToothGrowth` dataset available in R.  
+We explore the effect of supplement type and dose on tooth length.
+
+```{r load-toothgrowth-1}
+data("ToothGrowth")
+ToothGrowth$dose <- as.factor(ToothGrowth$dose)
+
+head(ToothGrowth)
+summary(ToothGrowth)
+```
+# Exploratory Boxplot
+library(ggplot2)
+ggplot(ToothGrowth, aes(x = dose, y = len, fill = supp)) +
+  geom_boxplot() +
+  labs(title = "Tooth Length by Supplement Type and Dose",
+       x = "Dose (mg/day)", y = "Tooth Length") +
+  theme_minimal()
+# T-test: Supplement type comparison
+t.test(len ~ supp, data = ToothGrowth, var.equal = TRUE)
+
+# T-test: Dose comparisons
+# 0.5 vs 1
+t.test(len ~ dose, data = subset(ToothGrowth, dose %in% c("0.5", "1")))
+
+# 1 vs 2
+t.test(len ~ dose, data = subset(ToothGrowth, dose %in% c("1", "2")))
+
+# 0.5 vs 2
+t.test(len ~ dose, data = subset(ToothGrowth, dose %in% c("0.5", "2")))
+
+## Sample Variance vs Theoretical Variance
+We now compare the sample variance of the means to the theoretical variance of the sampling distribution of the mean. The theoretical variance is calculated as `(1 / lambda)^2 / n`.
+
+```{r variance-check-2}
+# Calculate sample and theoretical variance
+sample_variance <- var(means)
+theoretical_variance <- (1 / lambda)^2 / n  # Variance of the sample mean
+
+# Output both values
+sample_variance
+theoretical_variance
+```
+
+## Demonstrating Approximate Normality
+To show that the distribution of sample means is approximately normal, we overlay a normal curve on the histogram and create a Q-Q plot.
+
+```{r normality-check-2, fig.height=4, fig.width=7}
+```
+# Histogram with normal curve
+hist(means, probability = TRUE,
+     main = "Histogram with Normal Curve",
+     col = "lightblue", xlab = "Sample Mean")
+curve(dnorm(x, mean = mean(means), sd = sd(means)),
+      col = "red", lwd = 2, add = TRUE)
+
+# Q-Q plot
+qqnorm(means)
+qqline(means, col = "red", lwd = 2)
+```
+## ToothGrowth Data Analysis
+We now perform basic inferential analysis using the `ToothGrowth` dataset available in R.  We explore the effect of supplement type and dose on tooth length.
+
+```{r load-toothgrowth-2}
+# Load the dataset and prepare it
+data("ToothGrowth")
+ToothGrowth$dose <- as.factor(ToothGrowth$dose)
+
+# View dataset structure
+head(ToothGrowth)
+summary(ToothGrowth)
+```
+# Exploratory Plot
+## We create a boxplot to visualize the effect of supplement type and dose on tooth length.
+
+
+library(ggplot2)
+ggplot(ToothGrowth, aes(x = dose, y = len, fill = supp)) +
+  geom_boxplot() +
+  labs(title = "Tooth Length by Supplement Type and Dose",
+       x = "Dose (mg/day)", y = "Tooth Length") +
+  theme_minimal()
+# Hypothesis Tests
+We compare tooth length by supplement type and between dose levels using t-tests.
+
+# Supplement type comparison
+t.test(len ~ supp, data = ToothGrowth, var.equal = TRUE)
+
+# Dose level comparisons
+t.test(len ~ dose, data = subset(ToothGrowth, dose %in% c("0.5", "1")))
+t.test(len ~ dose, data = subset(ToothGrowth, dose %in% c("1", "2")))
+t.test(len ~ dose, data = subset(ToothGrowth, dose %in% c("0.5", "2")))
+```
+
+
+
+
