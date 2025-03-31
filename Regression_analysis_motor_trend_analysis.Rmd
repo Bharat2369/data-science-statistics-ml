@@ -20,7 +20,7 @@ We performed both simple and multiple linear regression models:
 - R
 - R Markdown
 - ggplot2 for visualisation
-- `lm()` for regression modelling
+- `lm()` for regression modelling.
 
 ## 📈 Key Learnings
 
